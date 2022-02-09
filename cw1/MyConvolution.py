@@ -10,24 +10,35 @@ def convolve(image: np.ndarray, kernel: np.ndarray) -> np.ndarray:
 
 # Your code here. You'll need to vectorise your implementation 
 # to ensure it runs at a reasonable speed.
-
+    h = kernel.shape[0]
+    w = kernel.shape[1]
+    # invert kernel
+    for i in range(h//2):
+        for j in range(w):
+            kernel[i][j], kernel[h-i-1][w-j-1] = kernel[h-i-1][w-j-1], kernel[i][j]
+    if h%2 == 1:
+        i = h//2
+        for j in range(w//2):
+            kernel[i][j], kernel[i][w-j-1] = kernel[i][w-j-1], kernel[i][j]
+    # convolve image
     if len(image.shape) == 2:
-        return _convolve(image, kernel)
+        return _convolve(image, kernel, h, w)
     else:
         imgs = []
         for i in range(image.shape[2]):
-            imgs.append(_convolve(image[:,:,i], kernel))
+            imgs.append(_convolve(image[:,:,i], kernel, h, w))
         dstack = np.dstack(imgs)
         return dstack
 
-def _convolve(img, k):
-    h = k.shape[0] // 2
-    w = k.shape[1] // 2
-    for i in range(h):
-        for j in range(w):
-            k[i][j], k[h-i-1][w-j-1] = k[h-i-1][w-j-1], k[i][j]
+def _convolve(img, k, h, w):
     img_expend = np.pad(img, ((h, h), (w, w)), 'constant')
+
     for i in range(img.shape[0]):
         for j in range(img.shape[1]):
-            img[i][j] = k 
+            img[i][j] = np.sum(k * img_expend[i:i+k.shape[0], j:j+k.shape[1]])
+            if img[i][j] > 255:
+                img[i][j] = 255
+            if img[i][j] < 0:
+                img[i][j] = 0
+
     return img
