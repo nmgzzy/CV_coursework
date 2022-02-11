@@ -4,6 +4,7 @@ import os
 import glob
 import MyConvolution as mc
 import time
+import MyHybridImages as mh
 
 def test1():
     imgpaths = glob.glob(os.path.join("./data/", "*.bmp"))
@@ -28,8 +29,28 @@ def test1():
     # cv2.imshow('dst2', dst2)
     cv2.waitKey(0)
 
+def test2():
+    a = mh.makeGaussianKernel(1)
+    b = cv2.getGaussianKernel(9, 1)
+    b = b * b.T
+    print(a)
+    print("======\n")
+    print(b)
+    print("======\n")
+    print(np.sum(np.abs(a - b)) < 0.000001)
+    
+def test3():
+    src1 = cv2.imread("./data/bird.bmp", cv2.IMREAD_UNCHANGED) #0) #cv2.IMREAD_UNCHANGED)
+    src2 = cv2.imread("./data/plane.bmp", cv2.IMREAD_UNCHANGED) #0) #cv2.IMREAD_UNCHANGED)
+    a = time.time()
+    res = mh.myHybridImages(src2, 2, src1, 1)
+    b = time.time()
+    print(f'混合用时:{b-a}s')
+    cv2.imshow('res', res)
+    cv2.waitKey(0)
+
 def main():
-    imgpaths = glob.glob(os.path.join("./data/", "*.bmp"))
+    # imgpaths = glob.glob(os.path.join("./data/", "*.bmp"))
     # for path in v:
     #     img = cv2.imread(path, 0)
     #     cv2.imshow('image', img)
@@ -42,8 +63,8 @@ def main():
     # cv2.imshow('src', src)
     # cv2.imshow('blur', blur)
     # cv2.waitKey(0)
+    test3()
     
-    test1()
     
 if __name__ == '__main__':
     main()
