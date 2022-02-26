@@ -16,17 +16,17 @@ def test1():
     cv2.imshow('src2', src2)
     m, n = 3, 4
     # k = np.array([[1]*n for _ in range(m)])
-    k = np.array([[1,2,3],[4,5,6],[7,8,9]])
+    k = np.array([[1,1,1],[1,1,1],[1,1,1]])
     k = k / np.sum(k)
     a = time.time()
     dst = mc.convolve(src, k)
-    # dst2 = mc.convolve(src2, k)
+    dst2 = mc.convolve(src2, k)
     b = time.time()
     print(f'dst.shape {dst.shape}')
-    # print(f'dst2.shape {dst2.shape}')
-    print(f'卷积程序用时：{b-a}s')
+    print(f'dst2.shape {dst2.shape}')
+    print(f'卷积程序用时:{b-a}s')
     cv2.imshow('dst', dst)
-    # cv2.imshow('dst2', dst2)
+    cv2.imshow('dst2', dst2)
     cv2.waitKey(0)
 
 def test2():
@@ -40,13 +40,24 @@ def test2():
     print(np.sum(np.abs(a - b)) < 0.000001)
     
 def test3():
-    src1 = cv2.imread("./data/bird.bmp", cv2.IMREAD_UNCHANGED) #0) #cv2.IMREAD_UNCHANGED)
-    src2 = cv2.imread("./data/plane.bmp", cv2.IMREAD_UNCHANGED) #0) #cv2.IMREAD_UNCHANGED)
+    src1 = cv2.imread("./data/motorcycle.bmp", -1) #0) #cv2.IMREAD_UNCHANGED)
+    src2 = cv2.imread("./data/bicycle.bmp", -1) #0) #cv2.IMREAD_UNCHANGED)
+    print(src1.shape, src2.shape)
     a = time.time()
-    res = mh.myHybridImages(src2, 2, src1, 1)
+    res = mh.myHybridImages(src1, 3, src2, 3)
     b = time.time()
     print(f'混合用时:{b-a}s')
+    print(res.shape)
     cv2.imshow('res', res)
+    cv2.waitKey(0)
+    cv2.imwrite("res2.jpg", res)
+
+def test4():
+    src1 = cv2.imread("./data/marilyn.bmp", 0) #0) #cv2.IMREAD_UNCHANGED)
+    k = np.array([[0,1,0],[1,0,-1],[0,-1,0]])
+    k = k / np.sum(k)
+    dst = mc.convolve(src1, k)
+    cv2.imshow('res', dst)
     cv2.waitKey(0)
 
 def main():
